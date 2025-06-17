@@ -1,0 +1,9 @@
+.iridescence-container {
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  cursor: pointer;
+  height: 100%;
+}

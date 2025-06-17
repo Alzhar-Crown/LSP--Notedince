@@ -1,35 +1,34 @@
-    import { useState, useEffect, forwardRef,useImperativeHandle, } from "react";
+    import { useState, useEffect } from "react";
     import {router} from '@inertiajs/react';
     import Aurora from './Aurora';
 
 
 
-    interface Notes{
+    interface Todo{
         id?: number;
         header:string;
-        content:string;
     }
 
     interface Props{
         isOpen: boolean;
         closeModal: () => void;
-        notes?: Notes | null;
+        todo?: Todo | null;
     }
 
-    export default function  NotesFromModal  ({ isOpen, closeModal, notes}: Props){
+    export default function  TodoFromModal({ isOpen, closeModal, todo}: Props){
 
-        const [ formData, setFormData] = useState<Notes> ({header:"", content:""});
+        const [ formData, setFormData] = useState<Todo> ({header:""});
         
         //efek modal
         useEffect(()=> {
-            if(notes){
-                setFormData ({header: notes.header, content: notes.content ||""});
+            if(todo){
+                setFormData ({header: todo.header ||""});
     
             }else{
-                setFormData ({header: "", content: "" });
+                setFormData ({header: ""});
     
             }
-        }, [notes]);
+        }, [todo]);
 
         //setting element text area
         const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>{
@@ -45,15 +44,14 @@
             //ambil data dari inputan
             const data = new FormData();
             data.append('header', formData.header);
-            data.append('content', formData.content);
 
 
-            if(notes?.id){
+            if(todo?.id){
                 data.append("_method", "PUT");
-                router.post(`/notes/${notes.id}`, data, {
+                router.post(`/todo/${todo.id}`, data, {
                   
                   onSuccess: () => {
-                    console.log("notes?", notes);
+                    console.log("todo?", todo);
                     closeModal();
                         router.reload();
                     },
@@ -62,9 +60,9 @@
                     }
                 });
             }else{
-                router.post("/notes",data,{
+                router.post("/todo",data,{
                       onSuccess: () => {
-                        setFormData({header:"",content:""})
+                        setFormData({header:""})
                         closeModal();
                         router.reload();
                     },
@@ -74,7 +72,6 @@
                 })
             }
         }
-        
     
 
 
@@ -91,10 +88,10 @@
                    speed={0.5}
                  />
                <div className=" bg-opacity-8 relative  w-full p-6 rounded-lg shadow backdrop-blur-xl shadow-gray-800 z-40 max-w-xl">
-                 <h2 className="text-lg font-semibold mb-4">{notes ? "Edit Noted" : "Add Noted"}</h2>
+                 <h2 className="text-lg font-semibold mb-4">{todo ? "Edit Kegiatan" : "Add Kegiatan"}</h2>
         <form onSubmit={handleSubmit}  encType="multipart/form-data">
           <div className="mb-3">
-            <label className="block dark:text-white text-sm font-medium">Judul</label>
+            <label className="block dark:text-white text-sm font-medium">Kegiatan</label>
             <input
               type="text"
               name="header"
@@ -104,25 +101,15 @@
               required
             />
           </div>
-          <div className="mb-3">
-            <label className="block text-sm font-medium dark:text-white ">Konten</label>
-            <textarea
-              name="content"
-              value={formData.content}
-              onChange={handleChange}
-              className="w-full border dark:text-white  rounded p-2"
-              required
-            ></textarea>
-          </div>
+          
          
           <div className="flex justify-end gap-2">
             <button type="button" onClick={closeModal} className="px-4 py-2 bg-gray-500 text-white rounded">Batal</button>
-            <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded">{notes ? "Ubah" : "Input"}</button>
+            <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded">{todo ? "Ubah" : "Input"}</button>
           </div>
         </form>
       </div>
     </div>
         );
 
-    } ;
-
+    } 

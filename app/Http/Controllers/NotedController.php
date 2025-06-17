@@ -17,12 +17,13 @@ class NotedController extends Controller
     {
         $search = $request->input('search');
 
-        $notes = Noted::query()
+        $notes = Noted::where('user_id',Auth::id())
         ->when($search, function ($query,$search){
             $query->where('header','like',"%{$search}%")
            -> orWhere('content','like', "%{$search}%");
         })->get();
         //
+        
         return Inertia::render('Notes',  [
             'notes' => $notes,
             'search' => $search,
@@ -115,6 +116,13 @@ class NotedController extends Controller
     {
         $note->delete();
         return redirect()->route('notes.index')->with('success', 'data berhasil dihapus');
+        
+        //
+    }
+    public function deleteAll()
+    {
+        Noted::Truncate();
+        return redirect()->route('notes.index')->with('success', 'Semua data berhasil dihapus');
         
         //
     }
